@@ -262,8 +262,7 @@ namespace XmlTree
 				throw std::runtime_error("Required attribute '" + name + "' not found.");
 			}
 
-			Attribute a(attrib);
-			a.Convert(out);
+			Attribute(attrib).Convert(out);
 		}
 
 		// convert optional named attribute to type
@@ -277,9 +276,7 @@ namespace XmlTree
 				return false;
 			}
 			
-			Attribute a(attrib);
-			a.Convert(out);
-			
+			Attribute(attrib).Convert(out);
 			return true;
 		}
 
