@@ -14,7 +14,7 @@
 #define XMLTREE_BEGIN_ENUM_CONVERTER(EnumType)                                              \
 namespace XmlTree { namespace Enums                                                         \
 {                                                                                           \
-    template <>                                                                             \
+    template<>                                                                             \
     struct EnumString<EnumType> : public EnumStringBase<EnumString<EnumType>, EnumType>     \
     {                                                                                       \
         static void RegisterAll()                                                           \
@@ -71,13 +71,13 @@ namespace XmlTree
             static constexpr bool value = type::value;
         };
 
-        template <bool>
+        template<bool>
         struct convert_impl;
 
         template<>
         struct convert_impl<false>
         {
-            template <typename TIn, typename TOut>
+            template<typename TIn, typename TOut>
             static void convert(const TIn& e, TOut& out)
             {
                 Converters::Convert(e, out);
@@ -87,14 +87,14 @@ namespace XmlTree
         template<>
         struct convert_impl<true>
         {
-            template <typename TIn, typename TOut>
+            template<typename TIn, typename TOut>
             static void convert(const TIn& e, TOut& out)
             {
                 out.Convert(e);
             }
         };
 
-        template <typename TIn, typename TOut>
+        template<typename TIn, typename TOut>
         void call_convert(const TIn& e, TOut& out)
         {
             convert_impl<detail::has_convert<TOut, void(const TIn&)>::value>::convert(e, out);
@@ -167,7 +167,7 @@ namespace XmlTree
             return _attribute->Value() == nullptr ? "" : _attribute->Value();
         }
 
-        template <typename T>
+        template<typename T>
         void Convert(T& out)
         {
             detail::call_convert(*this, out);
@@ -297,18 +297,12 @@ namespace XmlTree
         template<typename T>
         void ConvertList(const std::string& listName, const std::string& elemName, std::vector<T>& out) const
         {
-            auto list = _element->FirstChildElement(listName.c_str());
-            if (list == nullptr)
+            if (_element->FirstChildElement(listName.c_str()) == nullptr)
             {
-                throw std::runtime_error("Required list " + listName + " not found.");
+                throw std::runtime_error("Required list '" + listName + "' not found.");
             }
 
-            for (auto e = list->FirstChildElement(elemName.c_str()); e != nullptr; e = e->NextSiblingElement(elemName.c_str()))
-            {
-                T i;
-                detail::call_convert(Element(e), i);
-                out.push_back(i);
-            }
+            ConvertListOptional(listName, elemName, out);
         }
 
         // convert optional named list of elements to vector of type
@@ -368,7 +362,7 @@ namespace XmlTree
 
     namespace Enums
     {
-        template <typename TDerived, typename TEnum>
+        template<typename TDerived, typename TEnum>
         struct EnumStringBase
         {
         public:
@@ -432,7 +426,7 @@ namespace XmlTree
             }
         };
 
-        template <typename TEnum>
+        template<typename TEnum>
         struct EnumString : public EnumStringBase<EnumString<TEnum>, TEnum>
         {
             static void RegisterAll() { assert(false); }
@@ -443,56 +437,68 @@ namespace XmlTree
     {
         // elements
 
-        template <typename T>
+        template<typename T>
         void Convert(const Element& e, T& out)
         {
             static_assert(false, "Missing element converter for type.");
         }
 
-        template <>
+        template<>
         void Convert<std::string>(const Element& e, std::string& out)
         {
             out = e.Value();
         }
 
-        template <>
+        template<>
         void Convert<bool>(const Element& e, bool& out)
         {
             out = false;
             std::istringstream(e.Value()) >> std::boolalpha >> out;
         }
 
-        template <>
+        template<>
         void Convert<float>(const Element& a, float& out)
         {
             out = std::stof(a.Value());
         }
 
-        template <>
+        template<>
         void Convert<double>(const Element& a, double& out)
         {
             out = std::stod(a.Value());
         }
 
-        template <>
+        template<>
+        void Convert<uint16_t>(const Element& e, uint16_t& out)
+        {
+            out = static_cast<uint16_t>(std::stoul(e.Value()));
+        }
+
+        template<>
+        void Convert<int16_t>(const Element& e, int16_t& out)
+        {
+            out = static_cast<int16_t>(std::stol(e.Value()));
+        }
+
+        template<>
         void Convert<uint32_t>(const Element& a, uint32_t& out)
         {
             out = std::stoul(a.Value());
         }
 
-        template <>
+        template<>
         void Convert<int32_t>(const Element& a, int32_t& out)
         {
             out = std::stol(a.Value());
         }
 
-        template <>
+        template<>
         void Convert<uint64_t>(const Element& a, uint64_t& out)
         {
             out = std::stoull(a.Value());
         }
 
-        template <>
+        template<>
         void Convert<int64_t>(const Element& a, int64_t& out)
         {
             out = std::stoll(a.Value());
@@ -501,56 +507,68 @@ namespace XmlTree
 
         // attributes
 
-        template <typename T>
+        template<typename T>
         void Convert(const Attribute& a, T& out)
         {
             static_assert(false, "Missing attribute converter for type.");
         }
 
-        template <>
+        template<>
         void Convert<std::string>(const Attribute& a, std::string& out)
         {
             out = a.Value();
         }
 
-        template <>
+        template<>
         void Convert<bool>(const Attribute& a, bool& out)
         {
             out = false;
             std::istringstream(a.Value()) >> std::boolalpha >> out;
         }
 
-        template <>
+        template<>
         void Convert<float>(const Attribute& a, float& out)
         {
             out = std::stof(a.Value());
         }
 
-        template <>
+        template<>
         void Convert<double>(const Attribute& a, double& out)
         {
             out = std::stod(a.Value());
         }
 
-        template <>
+        template<>
+        void Convert<uint16_t>(const Attribute& a, uint16_t& out)
+        {
+            out = static_cast<uint16_t>(std::stoul(a.Value()));
+        }
+
+        template<>
+        void Convert<int16_t>(const Attribute& a, int16_t& out)
+        {
+            out = static_cast<int16_t>(std::stol(a.Value()));
+        }
+
+        template<>
         void Convert<uint32_t>(const Attribute& a, uint32_t& out)
         {
             out = std::stoul(a.Value());
         }
 
-        template <>
+        template<>
         void Convert<int32_t>(const Attribute& a, int32_t& out)
         {
             out = std::stol(a.Value());
         }
 
-        template <>
+        template<>
         void Convert<uint64_t>(const Attribute& a, uint64_t& out)
         {
             out = std::stoull(a.Value());
         }
 
-        template <>
+        template<>
         void Convert<int64_t>(const Attribute& a, int64_t& out)
         {
             out = std::stoll(a.Value());
