@@ -381,7 +381,7 @@ namespace XmlTree
                     return itr->second;
                 }
 
-                throw std::runtime_error("'" + std::to_string(static_cast<int>(e)) + "' is not a valid value for enum and cannot be convert to string.");
+                throw std::runtime_error("'" + std::to_string(static_cast<int>(e)) + "' is not a valid value for enum and cannot be converted to string.");
             }
 
             static TEnum Val(const std::string& str)
@@ -429,7 +429,7 @@ namespace XmlTree
         template<typename TEnum>
         struct EnumString : public EnumStringBase<EnumString<TEnum>, TEnum>
         {
-            static void RegisterAll() { static_assert(false, "Enum type not register with XmlTree."); }
+            static void RegisterAll() { static_assert(false, "Enum type not registered with XmlTree."); }
         };
     }
 
