@@ -3,17 +3,17 @@
 
 namespace Ex2Data
 {
-	struct Note
-	{
-		enum class Priority { Low, Medium, High };
+    struct Note
+    {
+        enum class Priority { Low, Medium, High };
 
-		uint32_t id;
-		std::string from;
-		std::string to;
-		Priority priority;
-		std::string heading;
-		std::string body;
-	};
+        uint32_t id;
+        std::string from;
+        std::string to;
+        Priority priority;
+        std::string heading;
+        std::string body;
+    };
 }
 
 /**
@@ -35,39 +35,39 @@ XMLTREE_END_ENUM_CONVERTER(Ex2Data::Note::Priority)
 
   IMPORTANT: must be done in global namespace.
 */
-XMLTREE_REGISTER_CONVERTER(										\
-void Convert(const XmlTree::Element& e, Ex2Data::Note& out)		\
-{																\
-	e.ConvertAttribute("id", out.id);							\
-	e.Convert("from", out.from);								\
-	e.Convert("to", out.to);									\
-	e.Convert("priority", out.priority);						\
-	e.Convert("heading", out.heading);							\
-	e.ConvertOptional("body", out.body, std::string(""));		\
+XMLTREE_REGISTER_CONVERTER(                                     \
+void Convert(const XmlTree::Element& e, Ex2Data::Note& out)     \
+{                                                               \
+    e.ConvertAttribute("id", out.id);                           \
+    e.Convert("from", out.from);                                \
+    e.Convert("to", out.to);                                    \
+    e.Convert("priority", out.priority);                        \
+    e.Convert("heading", out.heading);                          \
+    e.ConvertOptional("body", out.body, std::string(""));       \
 });
 
 
 class Example2
 {
 public:
-	void Run()
-	{
-		try
-		{
-			auto note = XmlTree::Read<Ex2Data::Note>("../example/data/note.xml", "note");
+    void Run()
+    {
+        try
+        {
+            auto note = XmlTree::Read<Ex2Data::Note>("../example/data/note.xml", "note");
 
-			std::cout << "Note" << std::endl;
-			std::cout << "----------------------------------" << std::endl;
-			std::cout << "id:       " << note.id << std::endl;
-			std::cout << "from:     " << note.from << std::endl;
-			std::cout << "to:       " << note.to << std::endl;
-			std::cout << "priority: " << XMLTREE_ENUM_TO_STRING(Ex2Data::Note::Priority, note.priority) << std::endl;
-			std::cout << "heading:  " << note.heading << std::endl;
-			std::cout << "body:     " << note.body << std::endl;
-		}
-		catch (std::runtime_error& e)
-		{
-			std::cout << e.what() << std::endl;
-		}
-	}
+            std::cout << "Note" << std::endl;
+            std::cout << "----------------------------------" << std::endl;
+            std::cout << "id:       " << note.id << std::endl;
+            std::cout << "from:     " << note.from << std::endl;
+            std::cout << "to:       " << note.to << std::endl;
+            std::cout << "priority: " << XMLTREE_ENUM_TO_STRING(Ex2Data::Note::Priority, note.priority) << std::endl;
+            std::cout << "heading:  " << note.heading << std::endl;
+            std::cout << "body:     " << note.body << std::endl;
+        }
+        catch (std::runtime_error& e)
+        {
+            std::cout << e.what() << std::endl;
+        }
+    }
 };

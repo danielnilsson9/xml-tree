@@ -3,51 +3,51 @@
 
 namespace Ex4Data
 {
-	struct Note
-	{
-		enum class Priority { Low, Medium, High };
+    struct Note
+    {
+        enum class Priority { Low, Medium, High };
 
-		uint32_t id;
-		std::string from;
-		std::string to;
-		Priority priority;
-		std::string heading;
-		std::string body;
+        uint32_t id;
+        std::string from;
+        std::string to;
+        Priority priority;
+        std::string heading;
+        std::string body;
 
-		void Convert(const XmlTree::Element& e)
-		{
-			e.ConvertAttribute("id", id);
-			e.Convert("from", from);
-			e.Convert("to", to);
-			e.Convert("priority", priority);
-			e.Convert("heading", heading);
-			e.ConvertOptional("body", body, std::string(""));
-		}
-	};
+        void Convert(const XmlTree::Element& e)
+        {
+            e.ConvertAttribute("id", id);
+            e.Convert("from", from);
+            e.Convert("to", to);
+            e.Convert("priority", priority);
+            e.Convert("heading", heading);
+            e.ConvertOptional("body", body, std::string(""));
+        }
+    };
 
-	struct Info
-	{
-		int page;
-		int lastPage;
+    struct Info
+    {
+        int page;
+        int lastPage;
 
-		void Convert(const XmlTree::Element& e)
-		{
-			e.ConvertAttribute("page", page);
-			e.ConvertAttribute("of", lastPage);
-		}
-	};
+        void Convert(const XmlTree::Element& e)
+        {
+            e.ConvertAttribute("page", page);
+            e.ConvertAttribute("of", lastPage);
+        }
+    };
 
-	struct Page
-	{
-		Info info;
-		std::vector<Note> notes;
+    struct Page
+    {
+        Info info;
+        std::vector<Note> notes;
 
-		void Convert(const XmlTree::Element& e)
-		{
-			e.Convert("info", info);
-			e.ConvertList("notes", "note", notes);
-		}
-	};
+        void Convert(const XmlTree::Element& e)
+        {
+            e.Convert("info", info);
+            e.ConvertList("notes", "note", notes);
+        }
+    };
 }
 
 /**
@@ -66,29 +66,29 @@ XMLTREE_END_ENUM_CONVERTER(Ex4Data::Note::Priority)
 class Example4
 {
 public:
-	void Run()
-	{
-		try
-		{
-			auto page = XmlTree::Read<Ex4Data::Page>("../example/data/page_notes.xml", "page");
+    void Run()
+    {
+        try
+        {
+            auto page = XmlTree::Read<Ex4Data::Page>("../example/data/page_notes.xml", "page");
 
-			std::cout << "Page " << page.info.page << " of " << page.info.lastPage << std::endl << std::endl;
-			for (auto& note : page.notes)
-			{
-				std::cout << "Note" << std::endl;
-				std::cout << "----------------------------------" << std::endl;
-				std::cout << "id:       " << note.id << std::endl;
-				std::cout << "from:     " << note.from << std::endl;
-				std::cout << "to:       " << note.to << std::endl;
-				std::cout << "priority: " << XMLTREE_ENUM_TO_STRING(Ex4Data::Note::Priority, note.priority) << std::endl;
-				std::cout << "heading:  " << note.heading << std::endl;
-				std::cout << "body:     " << note.body << std::endl;
-				std::cout << std::endl;
-			}
-		}
-		catch (std::runtime_error& e)
-		{
-			std::cout << e.what() << std::endl;
-		}
-	}
+            std::cout << "Page " << page.info.page << " of " << page.info.lastPage << std::endl << std::endl;
+            for (auto& note : page.notes)
+            {
+                std::cout << "Note" << std::endl;
+                std::cout << "----------------------------------" << std::endl;
+                std::cout << "id:       " << note.id << std::endl;
+                std::cout << "from:     " << note.from << std::endl;
+                std::cout << "to:       " << note.to << std::endl;
+                std::cout << "priority: " << XMLTREE_ENUM_TO_STRING(Ex4Data::Note::Priority, note.priority) << std::endl;
+                std::cout << "heading:  " << note.heading << std::endl;
+                std::cout << "body:     " << note.body << std::endl;
+                std::cout << std::endl;
+            }
+        }
+        catch (std::runtime_error& e)
+        {
+            std::cout << e.what() << std::endl;
+        }
+    }
 };
