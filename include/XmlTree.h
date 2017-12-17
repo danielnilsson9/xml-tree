@@ -368,7 +368,7 @@ namespace XmlTree
         public:
             static const std::string& Str(TEnum e)
             {
-                auto& map = GetMap();
+                auto& map = Map();
 
                 auto itr = std::find_if(map.begin(), map.end(), 
                 [&](const std::pair<TEnum, std::string>& pair)
@@ -386,7 +386,7 @@ namespace XmlTree
 
             static TEnum Val(const std::string& str)
             {
-                auto& map = GetMap();
+                auto& map = Map();
 
                 auto itr = std::find_if(map.begin(), map.end(),
                     [&](const std::pair<TEnum, std::string>& pair)
@@ -405,7 +405,7 @@ namespace XmlTree
         protected:
             using EnumMap = std::vector<std::pair<TEnum, std::string>>;
 
-            static EnumMap& GetMap()
+            static EnumMap& Map()
             {
                 static EnumMap map;
                 static bool first = true;
@@ -421,7 +421,7 @@ namespace XmlTree
 
             static void Register(TEnum e, const std::string str)
             {
-                auto& map = GetMap();
+                auto& map = Map();
                 map.push_back(std::pair<TEnum, std::string>(e, str ));
             }
         };
@@ -429,7 +429,7 @@ namespace XmlTree
         template<typename TEnum>
         struct EnumString : public EnumStringBase<EnumString<TEnum>, TEnum>
         {
-            static void RegisterAll() { assert(false); }
+            static void RegisterAll() { static_assert(false, "Enum type not register with XmlTree."); }
         };
     }
 
