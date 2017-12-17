@@ -14,7 +14,7 @@
 #define XMLTREE_BEGIN_ENUM_CONVERTER(EnumType)                                              \
 namespace XmlTree { namespace Enums                                                         \
 {                                                                                           \
-    template<>                                                                             \
+    template<>                                                                              \
     struct EnumString<EnumType> : public EnumStringBase<EnumString<EnumType>, EnumType>     \
     {                                                                                       \
         static void RegisterAll()                                                           \
