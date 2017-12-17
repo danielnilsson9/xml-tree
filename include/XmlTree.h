@@ -55,12 +55,9 @@ namespace XmlTree
                 "Second template parameter needs to be of function type.");
         };
 
-        // specialization that does the checking
         template<typename C, typename Ret, typename... Args>
         struct has_convert<C, Ret(Args...)> {
         private:
-
-            // attempt to call it and see if the return type is correct
             template<typename T>
             static constexpr auto check(T*) -> typename
                 std::is_same<decltype(std::declval<T>().Convert(std::declval<Args>()...)), Ret>::type; 
@@ -346,6 +343,7 @@ namespace XmlTree
             }
         }
 
+        // loop over all child elements and do custom processing
         void ForEachElement(std::function<void(Element& e)> func) const
         {
             for (auto e = _element->FirstChildElement(); e != nullptr; e = e->NextSiblingElement())
@@ -354,6 +352,7 @@ namespace XmlTree
             }
         }
 
+        // loop over all attributes on element and do custom processing
         void ForEachAttribute(std::function<void(Attribute& a)> func) const
         {
             for (auto a = _element->FirstAttribute(); a != nullptr; a->Next())
