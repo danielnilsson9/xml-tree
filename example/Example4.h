@@ -14,7 +14,7 @@ namespace Ex4Data
         std::string heading;
         std::string body;
 
-        void Convert(const XmlTree::Element& e)
+        void Convert(XmlTree::Element& e)
         {
             e.ConvertAttribute("id", id);
             e.Convert("from", from);
@@ -30,7 +30,7 @@ namespace Ex4Data
         int page;
         int lastPage;
 
-        void Convert(const XmlTree::Element& e)
+        void Convert(XmlTree::Element& e)
         {
             e.ConvertAttribute("page", page);
             e.ConvertAttribute("of", lastPage);
@@ -42,7 +42,7 @@ namespace Ex4Data
         Info info;
         std::vector<Note> notes;
 
-        void Convert(const XmlTree::Element& e)
+        void Convert(XmlTree::Element& e)
         {
             e.Convert("info", info);
             e.ConvertList("notes", "note", notes);

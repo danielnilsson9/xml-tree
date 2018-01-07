@@ -14,7 +14,7 @@ namespace Ex3Data
         std::string heading;
         std::string body;
 
-        void Convert(const XmlTree::Element& e)
+        void Convert(XmlTree::Element& e)
         {
             e.ConvertAttribute("id", id);
             e.Convert("from", from);
@@ -29,7 +29,7 @@ namespace Ex3Data
     {
         std::vector<Note> notes;
 
-        void Convert(const XmlTree::Element& e)
+        void Convert(XmlTree::Element& e)
         {
             e.ConvertRepeated("note", notes);
         }

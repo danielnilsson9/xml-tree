@@ -12,7 +12,7 @@ namespace Ex1Data
         std::string heading;
         std::string body;
 
-        void Convert(const XmlTree::Element& e)
+        void Convert(XmlTree::Element& e)
         {
             e.ConvertAttribute("id", id);
             e.Convert("from", from);
