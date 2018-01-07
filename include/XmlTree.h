@@ -163,11 +163,13 @@ namespace XmlTree
         {
         }
 
+        // name of attribute
         std::string Name() const
         {
             return _attribute->Name() == nullptr ? "" : _attribute->Name();
         }
 
+        // value of attribute
         std::string Value() const
         {
             return _attribute->Value() == nullptr ? "" : _attribute->Value();
@@ -176,7 +178,7 @@ namespace XmlTree
         template<typename T>
         void Convert(T& out)
         {
-            detail::call_convert(*this, out);
+            detail::call_convert(const_cast<Attribute&>(*this), out);
         }
 
     private:
@@ -244,7 +246,7 @@ namespace XmlTree
         template<typename T>
         void Convert(T& out) const
         {
-            detail::call_convert<Element, T>(const_cast<Element&>(*this), out);
+            detail::call_convert(const_cast<Element&>(*this), out);
         }
 
         // convert named child element to type
@@ -297,7 +299,7 @@ namespace XmlTree
                 throw std::runtime_error("Required attribute '" + name + "' not found.");
             }
 
-            this->Attribute(name).Convert(out);
+            Attribute(name).Convert(out);
         }
 
         // convert optional named attribute to type
@@ -310,7 +312,7 @@ namespace XmlTree
                 return false;
             }
             
-            this->Attribute(name).Convert(out);
+            Attribute(name).Convert(out);
             return true;
         }
 
@@ -325,7 +327,7 @@ namespace XmlTree
             }
 
             out.HasValue(true);
-            this->Attribute(name).Convert(out.Value());
+            Attribute(name).Convert(out.Value());
             return true;
         }
 
