@@ -36,7 +36,7 @@ XMLTREE_END_ENUM_CONVERTER(Ex2Data::Note::Priority)
   IMPORTANT: must be done in global namespace.
 */
 XMLTREE_REGISTER_CONVERTER(                                     \
-void Convert(XmlTree::Element& e, Ex2Data::Note& out)     \
+void Convert(XmlTree::Element& e, Ex2Data::Note& out)           \
 {                                                               \
     e.ConvertAttribute("id", out.id);                           \
     e.Convert("from", out.from);                                \

@@ -7,7 +7,7 @@
 enum class Example { Example1, Example2, Example3, Example4 };
 
 // Set example to run:
-Example run = Example::Example1;
+Example run = Example::Example4;
 
 int main()
 {

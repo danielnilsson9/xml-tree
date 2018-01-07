@@ -42,8 +42,20 @@ namespace Ex4Data
         Info info;
         std::vector<Note> notes;
 
+        //int page;
+        //int lastPage;
+
         void Convert(XmlTree::Element& e)
         {
+            // Example: collapse structure
+            // 
+            // If we wanted to have the "page" and "lastPage" directly 
+            // in this struct instead we could convert them by
+            // accessing the "info" child element from here.
+
+            //e.Child("info").ConvertAttribute("page", page);
+            //e.Child("info").ConvertAttribute("of", lastPage);
+
             e.Convert("info", info);
             e.ConvertList("notes", "note", notes);
         }

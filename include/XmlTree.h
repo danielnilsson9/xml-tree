@@ -203,8 +203,44 @@ namespace XmlTree
             return _element->GetText() == nullptr ? "" : _element->GetText();
         }
 
+        // true if element has named attribute, false otherwise
+        bool HasAttribute(const std::string& name) const
+        {
+            return _element->FindAttribute(name.c_str()) != nullptr;
+        }
 
-        // convert element itself to type. if element is of value type this does conversion of the value.
+        // get named attribute, throws exception if does not exist.
+        Attribute Attribute(const std::string& name) const
+        {
+            auto attrib = _element->FindAttribute(name.c_str());
+            if (attrib == nullptr)
+            {
+                throw std::runtime_error("Element '" + Name() + "' does not have an attribute named '" + name + "'.");
+            }
+
+            return XmlTree::Attribute(attrib);
+        }
+
+        // true if element has named child element, false otherwise
+        bool HasChild(const std::string& name) const
+        {
+            return _element->FirstChildElement(name.c_str()) != nullptr;
+        }
+
+        // get named child element, throws exception if does not exist.
+        Element Child(const std::string& name) const
+        {
+            auto elem = _element->FirstChildElement(name.c_str());
+            if (elem == nullptr)
+            {
+                throw std::runtime_error("Element '" + Name() + "' does not have a child named '" + name + "'.");
+            }
+
+            return Element(elem);
+        }
+
+
+        // convert element itself to type, if element is of value type this will perform conversion of the value.
         template<typename T>
         void Convert(T& out) const
         {
@@ -215,27 +251,25 @@ namespace XmlTree
         template<typename T>
         void Convert(const std::string& name, T& out) const
         {
-            auto elem = _element->FirstChildElement(name.c_str());
-            if (elem == nullptr)
+            if (!HasChild(name))
             {
                 throw std::runtime_error("Required element '" + name + "' not found.");
             }
 
-	        Element(elem).Convert(out);
+	        Child(name).Convert(out);
         }
 
         // convert optional named child element to type
         template<typename T>
         bool ConvertOptional(const std::string& name, T& out, const T& defaultVal) const
         {
-            auto elem = _element->FirstChildElement(name.c_str());
-            if (elem == nullptr)
+            if (!HasChild(name))
             {
                 out = defaultVal;
                 return false;
             }
             
-	        Element(elem).Convert(out);
+	        Child(name).Convert(out);
             return true;
         }
 
@@ -243,15 +277,14 @@ namespace XmlTree
         template<typename T>
         bool ConvertOptional(const std::string& name, Optional<T>& out) const
         {
-            auto elem = _element->FirstChildElement(name.c_str());
-            if (elem == nullptr)
+            if (!HasChild(name))
             {
                 out.Reset();
                 return false;
             }
 
             out.HasValue(true);
-	        Element(elem).Convert(out.Value());
+	        Child(name).Convert(out.Value());
             return true;
         }
 
@@ -259,27 +292,25 @@ namespace XmlTree
         template<typename T>
         void ConvertAttribute(const std::string& name, T& out) const
         {
-            auto attrib = _element->FindAttribute(name.c_str());
-            if (attrib == nullptr)
+            if (!HasAttribute(name))
             {
                 throw std::runtime_error("Required attribute '" + name + "' not found.");
             }
 
-            Attribute(attrib).Convert(out);
+            this->Attribute(name).Convert(out);
         }
 
         // convert optional named attribute to type
         template<typename T>
         bool ConvertAttributeOptional(const std::string& name, T& out, const T& defaultVal) const
         {
-            auto attrib = _element->FindAttribute(name.c_str());
-            if (attrib == nullptr)
+            if (!HasAttribute(name))
             {
                 out = defaultVal;
                 return false;
             }
             
-            Attribute(attrib).Convert(out);
+            this->Attribute(name).Convert(out);
             return true;
         }
 
@@ -287,15 +318,14 @@ namespace XmlTree
         template<typename T>
         bool ConvertAttributeOptional(const std::string& name, Optional<T>& out) const
         {
-            auto attrib = _element->FindAttribute(name.c_str());
-            if (attrib == nullptr)
+            if (!HasAttribute(name))
             {
                 out.Reset();
                 return false;
             }
 
             out.HasValue(true);
-            Attribute(attrib).Convert(out.Value());
+            this->Attribute(name).Convert(out.Value());
             return true;
         }
 
@@ -303,7 +333,7 @@ namespace XmlTree
         template<typename T>
         void ConvertList(const std::string& listName, const std::string& elemName, std::vector<T>& out) const
         {
-            if (_element->FirstChildElement(listName.c_str()) == nullptr)
+            if (!HasChild(listName))
             {
                 throw std::runtime_error("Required list '" + listName + "' not found.");
             }
@@ -315,12 +345,12 @@ namespace XmlTree
         template<typename T>
         bool ConvertListOptional(const std::string& listName, const std::string& elemName, std::vector<T>& out) const
         {
-            auto list = _element->FirstChildElement(listName.c_str());
-            if (list == nullptr)
+            if (!HasChild(listName))
             {
                 return false;
             }
 
+            auto list = _element->FirstChildElement(listName.c_str());
             for (auto e = list->FirstChildElement(elemName.c_str()); e != nullptr; e = e->NextSiblingElement(elemName.c_str()))
             {
                 T i;
@@ -354,11 +384,11 @@ namespace XmlTree
         }
 
         // loop over all attributes on element and do custom processing
-        void ForEachAttribute(std::function<void(Attribute& a)> func) const
+        void ForEachAttribute(std::function<void(XmlTree::Attribute& a)> func) const
         {
             for (auto a = _element->FirstAttribute(); a != nullptr; a->Next())
             {
-	            Attribute tmp(a);
+	            XmlTree::Attribute tmp(a);
                 func(tmp);
             }
         }
