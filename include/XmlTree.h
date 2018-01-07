@@ -9,7 +9,7 @@
 #include <sstream>
 #include <type_traits>
 
-#define XMLTREE_REGISTER_CONVERTER(f) namespace XmlTree { namespace Converters { template<> inline f }}											
+#define XMLTREE_REGISTER_CONVERTER(f) namespace XmlTree { namespace Converters { template<> inline f }}
 
 #define XMLTREE_BEGIN_ENUM_CONVERTER(EnumType)                                              \
 namespace XmlTree { namespace Enums                                                         \
@@ -45,16 +45,16 @@ XMLTREE_REGISTER_CONVERTER(                                     \
 
 namespace XmlTree
 {
-	
-	// forward declaration
-	class Element;
-	class Attribute;
-	namespace Converters
-	{
-		template<typename T> void Convert(Element& a, T& out);
-		template<typename T> void Convert(Attribute& a, T& out);
-	}
-	
+    
+    // forward declaration
+    class Element;
+    class Attribute;
+    namespace Converters
+    {
+        template<typename T> void Convert(Element& a, T& out);
+        template<typename T> void Convert(Attribute& a, T& out);
+    }
+
     namespace detail
     {
         template<typename, typename T>
@@ -80,26 +80,26 @@ namespace XmlTree
             static constexpr bool value = type::value;
         };
 
-		template<bool> struct convert_impl;
+        template<bool> struct convert_impl;
 
-	    template<> struct convert_impl<false>
-	    {
-		    template<typename TIn, typename TOut>
-			static void convert(TIn& e, TOut& out)
-			{
-				Converters::Convert(e, out);
-			}
-	    };
+        template<> struct convert_impl<false>
+        {
+            template<typename TIn, typename TOut>
+            static void convert(TIn& e, TOut& out)
+            {
+                Converters::Convert(e, out);
+            }
+        };
 
-	    template<> struct convert_impl<true>
-	    {
-		    template<typename TIn, typename TOut>
-			static void convert(TIn& e, TOut& out)
-			{
-				out.Convert(e);
-			}
-	    };
-	    
+        template<> struct convert_impl<true>
+        {
+            template<typename TIn, typename TOut>
+            static void convert(TIn& e, TOut& out)
+            {
+                out.Convert(e);
+            }
+        };
+        
         template<typename TIn, typename TOut>
         void call_convert(TIn& e, TOut& out)
         {
@@ -244,7 +244,7 @@ namespace XmlTree
         template<typename T>
         void Convert(T& out) const
         {
-	        detail::call_convert<Element, T>(const_cast<Element&>(*this), out);
+            detail::call_convert<Element, T>(const_cast<Element&>(*this), out);
         }
 
         // convert named child element to type
@@ -256,7 +256,7 @@ namespace XmlTree
                 throw std::runtime_error("Required element '" + name + "' not found.");
             }
 
-	        Child(name).Convert(out);
+            Child(name).Convert(out);
         }
 
         // convert optional named child element to type
@@ -269,7 +269,7 @@ namespace XmlTree
                 return false;
             }
             
-	        Child(name).Convert(out);
+            Child(name).Convert(out);
             return true;
         }
 
@@ -284,7 +284,7 @@ namespace XmlTree
             }
 
             out.HasValue(true);
-	        Child(name).Convert(out.Value());
+            Child(name).Convert(out.Value());
             return true;
         }
 
@@ -354,7 +354,7 @@ namespace XmlTree
             for (auto e = list->FirstChildElement(elemName.c_str()); e != nullptr; e = e->NextSiblingElement(elemName.c_str()))
             {
                 T i;
-	            Element(e).Convert(i);
+                Element(e).Convert(i);
                 out.push_back(i);
             }
 
@@ -368,7 +368,7 @@ namespace XmlTree
             for (auto e = _element->FirstChildElement(name.c_str()); e != nullptr; e = e->NextSiblingElement(name.c_str()))
             {
                 T i;
-	            Element(e).Convert(i);
+                Element(e).Convert(i);
                 out.push_back(i);
             }
         }
@@ -378,7 +378,7 @@ namespace XmlTree
         {
             for (auto e = _element->FirstChildElement(); e != nullptr; e = e->NextSiblingElement())
             {
-	            Element tmp(e);
+                Element tmp(e);
                 func(tmp);
             }
         }
@@ -388,7 +388,7 @@ namespace XmlTree
         {
             for (auto a = _element->FirstAttribute(); a != nullptr; a->Next())
             {
-	            XmlTree::Attribute tmp(a);
+                XmlTree::Attribute tmp(a);
                 func(tmp);
             }
         }
@@ -409,10 +409,10 @@ namespace XmlTree
                 auto& map = Map();
 
                 auto itr = std::find_if(map.begin(), map.end(), 
-                [&](const std::pair<TEnum, std::string>& pair)
-                {
-                    return pair.first == e;
-                });
+                    [&](const std::pair<TEnum, std::string>& pair)
+                    {
+                        return pair.first == e;
+                    });
 
                 if (itr != map.end())
                 {
@@ -428,9 +428,9 @@ namespace XmlTree
 
                 auto itr = std::find_if(map.begin(), map.end(),
                     [&](const std::pair<TEnum, std::string>& pair)
-                {
-                    return pair.second == str;
-                });
+                    {
+                        return pair.second == str;
+                    });
 
                 if (itr != map.end())
                 {
@@ -473,8 +473,8 @@ namespace XmlTree
 
     namespace Converters
     {
-	    // elements
-	    
+        // elements
+        
         template<>
         inline void Convert<std::string>(Element& e, std::string& out)
         {
@@ -537,7 +537,7 @@ namespace XmlTree
         }
 
 
-	    // attributes
+        // attributes
 
         template<>
         inline void Convert<std::string>(Attribute& a, std::string& out)
@@ -618,7 +618,7 @@ namespace XmlTree
             throw std::runtime_error("Root element '" + rootElement + "' not found.");
         }
 
-	    Element(root).Convert(res);
+        Element(root).Convert(res);
         return res;
     }
 
@@ -639,8 +639,8 @@ namespace XmlTree
             throw std::runtime_error("Root element '" + rootElement + "' not found.");
         }
 
-	    Element(root).Convert(res);
+        Element(root).Convert(res);
         return res;
     }
-	
+
 }
